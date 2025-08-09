@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, type DragEvent } from 'react'
+import { jsPDF } from "jspdf";
 import './App.css'
 
 interface FileItem {
@@ -80,6 +81,85 @@ function App() {
     setFiles(files.filter(file => file.id !== id));
   };
   
+  // Функция для создания PDF из изображений
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  
+  const generatePdf = async () => {
+    if (files.length === 0 || isGeneratingPdf) return;
+    
+    setIsGeneratingPdf(true);
+    
+    try {
+      // Создаем новый PDF документ формата A4
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      // Размеры страницы A4 в мм
+      const pageWidth = 210;
+      const pageHeight = 297;
+      
+      // Отступы от краев страницы
+      const margin = 10;
+      const maxWidth = pageWidth - (margin * 2);
+      const maxHeight = pageHeight - (margin * 2);
+      
+      // Обрабатываем каждое изображение
+      for (let i = 0; i < files.length; i++) {
+        // Добавляем новую страницу для каждого изображения, кроме первого
+        if (i > 0) {
+          pdf.addPage();
+        }
+        
+        const file = files[i];
+        const img = new Image();
+        
+        // Загружаем изображение и добавляем его в PDF
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => {
+            // Вычисляем размеры для сохранения пропорций
+            let imgWidth = img.width;
+            let imgHeight = img.height;
+            
+            // Масштабируем изображение, чтобы оно поместилось на странице
+            const ratio = Math.min(maxWidth / imgWidth, maxHeight / imgHeight);
+            imgWidth = imgWidth * ratio;
+            imgHeight = imgHeight * ratio;
+            
+            // Вычисляем позицию для центрирования изображения
+            const x = margin + (maxWidth - imgWidth) / 2;
+            const y = margin + (maxHeight - imgHeight) / 2;
+            
+            // Добавляем изображение в PDF
+            pdf.addImage(img, 'JPEG', x, y, imgWidth, imgHeight);
+            resolve();
+          };
+          
+          img.onerror = () => {
+            reject(new Error(`Failed to load image: ${file.name}`));
+          };
+          
+          if (file.url) {
+            img.src = file.url;
+          } else {
+            // Если URL не доступен, создаем его из blob
+            img.src = URL.createObjectURL(file.blob);
+          }
+        });
+      }
+      
+      // Сохраняем PDF
+      pdf.save('images.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+  
   // Очистка URL объектов при размонтировании компонента
   useEffect(() => {
     return () => {
@@ -112,8 +192,19 @@ function App() {
       
       {files.length > 0 && (
         <div className="files-list">
-          <h2>Uploaded Files</h2>
-          <p>Drag and drop to reorder files</p>
+          <div className="files-header">
+            <div>
+              <h2>Uploaded Files</h2>
+              <p>Drag and drop to reorder files</p>
+            </div>
+            <button 
+              className="generate-pdf-button" 
+              onClick={generatePdf}
+              disabled={isGeneratingPdf}
+            >
+              {isGeneratingPdf ? 'Generating...' : 'Generate PDF'}
+            </button>
+          </div>
           
           <div className="file-items">
             {files.map((file, index) => (
