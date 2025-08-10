@@ -27,7 +27,7 @@ const ActionButtons = ({ files }: ActionButtonsProps) => {
         if (file.type === 'image') {
           // Загружаем изображение
           const img = new Image();
-          img.src = file.url!;
+          img.src = file.imagePreviewUrl!;
           
           await new Promise<void>((resolve) => {
             img.onload = () => {
@@ -97,7 +97,7 @@ const ActionButtons = ({ files }: ActionButtonsProps) => {
       // Добавляем все файлы в ZIP архив
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const response = await fetch(file.url!);
+        const response = await fetch(file.imagePreviewUrl!);
         const blob = await response.blob();
         zip.file(file.name, blob);
       }

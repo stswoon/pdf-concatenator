@@ -22,7 +22,7 @@ const FileUploader = ({ onFilesAdded }: FileUploaderProps) => {
             id: `${Date.now()}-${i}`,
             name: file.name,
             blob: file,
-            url: url,
+            imagePreviewUrl: url,
             type: 'image'
           });
         } else if (file.type === 'application/pdf') {
@@ -31,7 +31,7 @@ const FileUploader = ({ onFilesAdded }: FileUploaderProps) => {
             id: `${Date.now()}-${i}`,
             name: file.name,
             blob: file,
-            url: url,
+            imagePreviewUrl: url,
             type: 'pdf'
           });
         }

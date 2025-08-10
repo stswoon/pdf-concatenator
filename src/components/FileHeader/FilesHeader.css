@@ -1,0 +1,14 @@
+.files-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/*@media (max-width: 600px) {*/
+/*    .files-header {*/
+/*        flex-direction: column;*/
+/*        gap: 15px;*/
+/*        align-items: flex-start;*/
+/*    }*/
+/*}*/

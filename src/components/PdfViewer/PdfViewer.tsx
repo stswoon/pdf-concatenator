@@ -21,7 +21,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
     
     // Обновляем количество страниц в PDF
     if (selectedPdf) {
-      selectedPdf.pdfPages = numPages;
+      selectedPdf.pdfPagesNumber = numPages;
     }
   };
 
@@ -32,7 +32,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
     
     try {
       const newImages: FileItem[] = [];
-      const pdf = await pdfjs.getDocument(selectedPdf.url!).promise;
+      const pdf = await pdfjs.getDocument(selectedPdf.imagePreviewUrl!).promise;
       
       for (let i = 1; i <= numPages; i++) {
         const page = await pdf.getPage(i);
@@ -59,7 +59,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
                 id: `${selectedPdf.id}-page-${i}`,
                 name: `${selectedPdf.name.replace('.pdf', '')}-page-${i}.png`,
                 blob: blob,
-                url: url,
+                imagePreviewUrl: url,
                 type: 'image'
               });
               
@@ -83,7 +83,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
   return (
     <div className="pdf-viewer">
       <Document
-        file={selectedPdf.url}
+        file={selectedPdf.imagePreviewUrl}
         onLoadSuccess={onDocumentLoadSuccess}
         className="pdf-document"
       >

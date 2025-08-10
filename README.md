@@ -12,16 +12,17 @@ npm create vite@latest my-react-app -- --template react-ts
 
 2. install pdf lib [V]
 
-Chosed `jspdf`.
+Choosed `jspdf`.
 
 Also interesting one is `pdf-lib`.
 
-Short piace of desision provided in https://medium.com/deno-the-complete-reference/5-useful-npm-packages-for-pdf-processing-in-node-js-c573cee51804
+Piece of information for decision provided
 
-Also ChatGPT answer
+* in https://medium.com/deno-the-complete-reference/5-useful-npm-packages-for-pdf-processing-in-node-js-c573cee51804
+* and also ChatGPT answer
 
 | Library                                                     | Main Use Case                                     | Pros                                                                      | Cons                                             |
-| ----------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------ |
+|-------------------------------------------------------------|---------------------------------------------------|---------------------------------------------------------------------------|--------------------------------------------------|
 | **[PDF.js](https://mozilla.github.io/pdf.js/)**             | Rendering and reading PDFs                        | Maintained by Mozilla, works fully in browser, good for viewing/searching | Not designed for PDF creation                    |
 | **[pdf-lib](https://pdf-lib.js.org/)**                      | Creating and editing PDFs                         | No dependencies, supports browser/Node.js, works with existing PDFs       | More low-level API compared to html2pdf          |
 | **[jsPDF](https://github.com/parallax/jsPDF)**              | Generating PDFs from scratch or HTML              | Simple API, HTML → PDF with plugins                                       | Rendering complex HTML/CSS can be limited        |
@@ -46,37 +47,45 @@ Also ChatGPT answer
 теперь добавь кнопку которая собирает все blob из массива передет ее в библиотеку jspdf, которая каждую картинку кладет на отдельный A4 лист. Затем сгенерированный pdf можно скачать.
 ```
 
-8. Split PDF
+8. Split PDF [V]
 
 ```
 добавь возможность разделить pdf на отдельные картинки используя react-pdf
 ```
-react-pdf т.к. jsPDF не поддерживает чтение pdf.
 
-9. Не смог решить проблему `Setting up fake worker failed`
+Use `react-pdf` because `jsPDF` not support read and parse from pdf.
+
+9. **Не смог решить проблему** `Setting up fake worker failed` [V]
+
 ```
 Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically imported module: http://unpkg.com/pdfjs-dist@5.3.31/build/pdf.worker.min.js?import".
 ```
-Fixed in https://github.com/stswoon/pdf-concatenate/commit/579922d0413e216b3ba0b2ab0c4d4ff8630ed7de - `copy-pdf-worker`
 
-10. Download extracted images az zip
+> Fixed in https://github.com/stswoon/pdf-concatenate/commit/579922d0413e216b3ba0b2ab0c4d4ff8630ed7de see
+`copy-pdf-worker` and `pdfjs.GlobalWorkerOptions.workerSrc = "pdf.worker.mjs";`
+
+10. Download extracted images az zip [V]
 
 ```
 добавь возможность скачать все файлы в виде zip архива через библиотеку jszip
 ```
 
-11. Refactor to several files
+11. Refactor to several files [V]
 
 ```
 Сейчас весь код сосредоточен в двух файлах App.tsx и App.css. Отрефатори код, в частности разбей его по нескольким компонентам, чтобы код легче читался дл человека и был более пригоден для саппорта.
 ```
 
-12. Image Resize in pdf
+12. Manual refactoring
 
-13. SSG
+13. Image Resize in pdf
 
-14. Ad
+14. Vite SSG
 
 15. Docker + Deploy
 
+16. Beautification + Metadata (e.g. offline) + openicons for messagers
 
+17. Offline
+
+18. Ad

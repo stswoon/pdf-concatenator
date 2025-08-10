@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import type { FileItem as FileItemType } from '../../types';
-import FileItem from '../FileItem';
 import './FileList.css';
+import { useState, type DragEvent} from 'react';
+import type { FileItem as FileItemType } from '../../types';
+import FileItem from "../FileItem/FileItem.tsx";
 
 interface FileListProps {
   files: FileItemType[];
@@ -12,25 +12,25 @@ interface FileListProps {
 
 const FileList = ({ files, onFilesReorder, onRemoveFile, onPdfSelect }: FileListProps) => {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
-  const [dragOverItem, setDragOverItem] = useState<string | null>(null);
+  // const [dragOverItem, setDragOverItem] = useState<string | null>(null);
 
-  const handleDragStart = (e: React.DragEvent, id: string) => {
+  const handleDragStart = (e: DragEvent, id: string) => {
     setDraggedItem(id);
     e.dataTransfer.effectAllowed = 'move';
     // Для Firefox
     e.dataTransfer.setData('text/plain', id);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    setDragOverItem(null);
+  const handleDragLeave = () => {
+    // setDragOverItem(null);
   };
 
-  const handleDrop = (e: React.DragEvent, targetId: string) => {
+  const handleDrop = (e: DragEvent, targetId: string) => {
     e.preventDefault();
     
     if (draggedItem && draggedItem !== targetId) {
@@ -47,7 +47,7 @@ const FileList = ({ files, onFilesReorder, onRemoveFile, onPdfSelect }: FileList
     }
     
     setDraggedItem(null);
-    setDragOverItem(null);
+    // setDragOverItem(null);
   };
 
   if (files.length === 0) {
