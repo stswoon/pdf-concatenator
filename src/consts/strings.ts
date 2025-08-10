@@ -1,4 +1,5 @@
 export const strings = {
     appName: "PDF concatenator (and splitter)",
-    uploadedFiles: "Uploaded Files"
+    uploadedFiles: "Uploaded Files",
+    uploadFiles: "Upload Images or PDF"
 }

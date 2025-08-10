@@ -33,7 +33,7 @@ const FileItem = ({
     >
       <div className="file-thumbnail">
         {file.type === 'image' ? (
-          <img src={file.imagePreviewUrl} alt={file.name} className="image-thumbnail" />
+          <img src={file.blobUrl} alt={file.name} className="image-thumbnail" />
         ) : (
           <div className="pdf-thumbnail">
             <div className="pdf-icon">PDF</div>

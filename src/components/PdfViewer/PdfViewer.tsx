@@ -3,16 +3,13 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import type { FileItem } from '../../types';
 import './PdfViewer.css';
 
-// Установка worker для react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `pdf.worker.mjs`;
-
 interface PdfViewerProps {
   selectedPdf: FileItem | null;
-  onClosePdf: () => void;
+  onClose: () => void;
   onExtractImages: (newImages: FileItem[]) => void;
 }
 
-const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps) => {
+const PdfViewer = ({ selectedPdf, onClose, onExtractImages }: PdfViewerProps) => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
 
@@ -32,7 +29,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
     
     try {
       const newImages: FileItem[] = [];
-      const pdf = await pdfjs.getDocument(selectedPdf.imagePreviewUrl!).promise;
+      const pdf = await pdfjs.getDocument(selectedPdf.blobUrl!).promise;
       
       for (let i = 1; i <= numPages; i++) {
         const page = await pdf.getPage(i);
@@ -59,7 +56,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
                 id: `${selectedPdf.id}-page-${i}`,
                 name: `${selectedPdf.name.replace('.pdf', '')}-page-${i}.png`,
                 blob: blob,
-                imagePreviewUrl: url,
+                blobUrl: url,
                 type: 'image'
               });
               
@@ -83,7 +80,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
   return (
     <div className="pdf-viewer">
       <Document
-        file={selectedPdf.imagePreviewUrl}
+        file={selectedPdf.blobUrl}
         onLoadSuccess={onDocumentLoadSuccess}
         className="pdf-document"
       >
@@ -104,7 +101,7 @@ const PdfViewer = ({ selectedPdf, onClosePdf, onExtractImages }: PdfViewerProps)
         >
           {isExtracting ? 'Extracting...' : 'Extract Images'}
         </button>
-        <button className="close-pdf-button" onClick={onClosePdf}>
+        <button className="close-pdf-button" onClick={onClose}>
           Close PDF
         </button>
       </div>

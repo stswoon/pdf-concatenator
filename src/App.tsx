@@ -5,6 +5,10 @@ import FileUploader from "./components/FileUploader/FileUploader.tsx";
 import PdfViewer from "./components/PdfViewer/PdfViewer.tsx";
 import FilesHeader from "./components/FileHeader/FilesHeader.tsx";
 import FileList from "./components/FileList/FileList.tsx";
+import {pdfjs} from "react-pdf";
+
+//setup pdfjs worker source
+pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.mjs';
 
 const App = () => {
     const {
@@ -26,7 +30,7 @@ const App = () => {
             {selectedPdf && (
                 <PdfViewer
                     selectedPdf={selectedPdf}
-                    onClosePdf={closePdf}
+                    onClose={closePdf}
                     onExtractImages={addFiles}
                 />
             )}

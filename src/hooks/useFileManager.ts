@@ -9,8 +9,8 @@ const useFileManager = () => {
   useEffect(() => {
     return () => {
       files.forEach(file => {
-        if (file.imagePreviewUrl) {
-          URL.revokeObjectURL(file.imagePreviewUrl);
+        if (file.blobUrl) {
+          URL.revokeObjectURL(file.blobUrl);
         }
       });
     };
@@ -23,8 +23,8 @@ const useFileManager = () => {
   const removeFile = (id: string) => {
     setFiles(prevFiles => {
       const fileToRemove = prevFiles.find(file => file.id === id);
-      if (fileToRemove && fileToRemove.imagePreviewUrl) {
-        URL.revokeObjectURL(fileToRemove.imagePreviewUrl);
+      if (fileToRemove && fileToRemove.blobUrl) {
+        URL.revokeObjectURL(fileToRemove.blobUrl);
       }
       return prevFiles.filter(file => file.id !== id);
     });
