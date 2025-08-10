@@ -65,12 +65,18 @@ Fixed in https://github.com/stswoon/pdf-concatenate/commit/579922d0413e216b3ba0b
 добавь возможность скачать все файлы в виде zip архива через библиотеку jszip
 ```
 
-11. Image Resize in pdf
+11. Refactor to several files
 
-12. SSG
+```
+Сейчас весь код сосредоточен в двух файлах App.tsx и App.css. Отрефатори код, в частности разбей его по нескольким компонентам, чтобы код легче читался дл человека и был более пригоден для саппорта.
+```
 
-13. Ad
+12. Image Resize in pdf
 
-14. Docker + Deploy
+13. SSG
 
-15. Refactor to several files
+14. Ad
+
+15. Docker + Deploy
+
+

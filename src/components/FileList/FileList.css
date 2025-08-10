@@ -1,0 +1,10 @@
+.files-list {
+  margin-top: 1rem;
+}
+
+.no-files {
+  text-align: center;
+  color: #666;
+  margin-top: 2rem;
+  font-style: italic;
+}

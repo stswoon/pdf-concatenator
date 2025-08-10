@@ -1,0 +1,73 @@
+.pdf-viewer {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pdf-document {
+  max-height: 600px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-page {
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.extract-images-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.extract-images-button:hover {
+  background-color: #388e3c;
+}
+
+.extract-images-button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.close-pdf-button {
+  background-color: #f44336;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.close-pdf-button:hover {
+  background-color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+  .pdf-document {
+    max-height: 400px;
+  }
+  
+  .pdf-page {
+    margin-bottom: 10px;
+  }
+}
