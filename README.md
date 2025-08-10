@@ -49,15 +49,21 @@ Also ChatGPT answer
 8. Split PDF
 
 ```
-добавь возможность разделить pdf на отдельные картинки
+добавь возможность разделить pdf на отдельные картинки используя react-pdf
+```
+react-pdf т.к. jsPDF не поддерживает чтение pdf.
+
+Не смог решить проблему:
+```
+Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically imported module: http://unpkg.com/pdfjs-dist@5.3.31/build/pdf.worker.min.js?import".
 ```
 
-9. Image Resize in pdf
+1. Image Resize in pdf
 
-10. SSG
+2.  SSG
 
-11. Ad
+3.  Ad
 
-12. Docker + Deploy
+4.  Docker + Deploy
 
-13. Refactor to several files
+5.  Refactor to several files

@@ -1,12 +1,26 @@
 import { useState, useRef, useCallback, useEffect, type DragEvent } from 'react'
 import { jsPDF } from "jspdf";
+import { Document, Page, pdfjs } from 'react-pdf';
 import './App.css'
+
+// Инициализация worker для react-pdf
+// pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `pdf.worker.mjs`;
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   'pdf.worker.min.mjs',
+//   import.meta.url,
+// ).toString();
+//TODO: copy pdf.worker.min.mjs to public folder from node_modules/pdfjs-dist/build/
+
+
 
 interface FileItem {
   id: string;
   name: string;
   blob: Blob;
   url?: string; // URL для предпросмотра изображения
+  type: 'image' | 'pdf'; // Тип файла: изображение или PDF
+  pdfPages?: number; // Количество страниц в PDF (если это PDF)
 }
 
 function App() {
@@ -14,6 +28,11 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [draggedItem, setDraggedItem] = useState<FileItem | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  
+  // Состояния для работы с PDF
+  const [selectedPdf, setSelectedPdf] = useState<FileItem | null>(null);
+  const [numPages, setNumPages] = useState<number>(0);
+  const [isExtractingImages, setIsExtractingImages] = useState<boolean>(false);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -21,13 +40,24 @@ function App() {
       
       for (let i = 0; i < event.target.files.length; i++) {
         const file = event.target.files[i];
+        const url = URL.createObjectURL(file);
+        
         if (file.type.startsWith('image/')) {
-          const url = URL.createObjectURL(file);
           newFiles.push({
             id: `${Date.now()}-${i}`,
             name: file.name,
             blob: file,
-            url: url
+            url: url,
+            type: 'image'
+          });
+        } else if (file.type === 'application/pdf') {
+          // Для PDF файлов создаем запись с типом 'pdf'
+          newFiles.push({
+            id: `${Date.now()}-${i}`,
+            name: file.name,
+            blob: file,
+            url: url,
+            type: 'pdf'
           });
         }
       }
@@ -160,6 +190,85 @@ function App() {
     }
   };
   
+  // Функция для обработки выбора PDF файла
+  const handlePdfSelect = (file: FileItem) => {
+    if (file.type === 'pdf') {
+      setSelectedPdf(file);
+    }
+  };
+
+  // Функция для обработки загрузки PDF документа
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    if (selectedPdf) {
+      // Обновляем информацию о количестве страниц в PDF
+      const updatedFiles = files.map(file => 
+        file.id === selectedPdf.id ? { ...file, pdfPages: numPages } : file
+      );
+      setFiles(updatedFiles);
+    }
+  };
+
+  // Функция для извлечения изображений из PDF
+  const extractImagesFromPdf = async () => {
+    if (!selectedPdf || isExtractingImages) return;
+    
+    setIsExtractingImages(true);
+    
+    try {
+      const newImages: FileItem[] = [];
+      const pdf = await pdfjs.getDocument(selectedPdf.url!).promise;
+      
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 1.5 });
+        
+        // Создаем canvas для рендеринга страницы
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        
+        // Рендерим страницу на canvas
+        await page.render({
+          canvasContext: context!,
+          viewport: viewport
+        }).promise;
+        
+        // Конвертируем canvas в изображение
+        const imgData = canvas.toDataURL('image/png');
+        
+        // Конвертируем Data URL в Blob
+        const response = await fetch(imgData);
+        const blob = await response.blob();
+        
+        // Создаем URL для предпросмотра
+        const url = URL.createObjectURL(blob);
+        
+        // Добавляем новое изображение в список
+        newImages.push({
+          id: `${selectedPdf.id}-page-${i}`,
+          name: `${selectedPdf.name.replace('.pdf', '')}-page-${i}.png`,
+          blob: blob,
+          url: url,
+          type: 'image'
+        });
+      }
+      
+      // Добавляем новые изображения в список файлов
+      setFiles([...files, ...newImages]);
+      
+      // Сбрасываем выбранный PDF
+      setSelectedPdf(null);
+      
+    } catch (error) {
+      console.error('Error extracting images from PDF:', error);
+      alert('Failed to extract images from PDF. Please try again.');
+    } finally {
+      setIsExtractingImages(false);
+    }
+  };
+
   // Очистка URL объектов при размонтировании компонента
   useEffect(() => {
     return () => {
@@ -180,7 +289,7 @@ function App() {
           type="file" 
           ref={fileInputRef}
           onChange={handleFileChange} 
-          accept="image/*" 
+          accept="image/*,application/pdf" 
           multiple 
           className="file-input"
           id="file-input"
@@ -190,6 +299,39 @@ function App() {
         </label>
       </div>
       
+      {selectedPdf && (
+        <div className="pdf-viewer">
+          <h2>PDF Preview: {selectedPdf.name}</h2>
+          <Document
+            file={selectedPdf.url}
+            onLoadSuccess={onDocumentLoadSuccess}
+            className="pdf-document"
+          >
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page 
+                key={`page_${index + 1}`} 
+                pageNumber={index + 1} 
+                scale={0.5}
+                className="pdf-page"
+              />
+            ))}
+          </Document>
+          <button 
+            className="extract-images-button" 
+            onClick={extractImagesFromPdf}
+            disabled={isExtractingImages}
+          >
+            {isExtractingImages ? 'Extracting Images...' : 'Extract Images from PDF'}
+          </button>
+          <button 
+            className="close-pdf-button" 
+            onClick={() => setSelectedPdf(null)}
+          >
+            Close PDF Preview
+          </button>
+        </div>
+      )}
+
       {files.length > 0 && (
         <div className="files-list">
           <div className="files-header">
@@ -219,12 +361,27 @@ function App() {
               >
                 {file.url && (
                   <div className="file-thumbnail">
-                    <img src={file.url} alt={file.name} />
+                    {file.type === 'image' ? (
+                      <img src={file.url} alt={file.name} />
+                    ) : (
+                      <div className="pdf-thumbnail" onClick={() => handlePdfSelect(file)}>
+                        <span className="pdf-icon">PDF</span>
+                        {file.pdfPages && <span className="pdf-pages">{file.pdfPages} pages</span>}
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="file-info">
                   <span className="file-number">{index + 1}</span>
                   <span className="file-name">{file.name}</span>
+                  {file.type === 'pdf' && (
+                    <button 
+                      className="view-pdf-button" 
+                      onClick={() => handlePdfSelect(file)}
+                    >
+                      View & Extract
+                    </button>
+                  )}
                 </div>
                 <button 
                   className="remove-button" 
