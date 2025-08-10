@@ -53,17 +53,24 @@ Also ChatGPT answer
 ```
 react-pdf т.к. jsPDF не поддерживает чтение pdf.
 
-Не смог решить проблему:
+9. Не смог решить проблему `Setting up fake worker failed`
 ```
 Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically imported module: http://unpkg.com/pdfjs-dist@5.3.31/build/pdf.worker.min.js?import".
 ```
+Fixed in https://github.com/stswoon/pdf-concatenate/commit/579922d0413e216b3ba0b2ab0c4d4ff8630ed7de - `copy-pdf-worker`
 
-1. Image Resize in pdf
+10. Download extracted images az zip
 
-2.  SSG
+```
+добавь возможность скачать все файлы в виде zip архива через библиотеку jszip
+```
 
-3.  Ad
+11. Image Resize in pdf
 
-4.  Docker + Deploy
+12. SSG
 
-5.  Refactor to several files
+13. Ad
+
+14. Docker + Deploy
+
+15. Refactor to several files

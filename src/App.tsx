@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect, type DragEvent } from 'react'
 import { jsPDF } from "jspdf";
 import { Document, Page, pdfjs } from 'react-pdf';
+import JSZip from 'jszip';
 import './App.css'
 
 // Инициализация worker для react-pdf
@@ -113,6 +114,7 @@ function App() {
   
   // Функция для создания PDF из изображений
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isGeneratingZip, setIsGeneratingZip] = useState(false);
   
   const generatePdf = async () => {
     if (files.length === 0 || isGeneratingPdf) return;
@@ -269,6 +271,47 @@ function App() {
     }
   };
 
+  // Функция для создания и скачивания ZIP-архива со всеми файлами
+  const generateZip = async () => {
+    if (files.length === 0 || isGeneratingZip) return;
+    
+    setIsGeneratingZip(true);
+    
+    try {
+      const zip = new JSZip();
+      
+      // Добавляем каждый файл в архив
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // Добавляем файл в архив с его именем
+        zip.file(file.name, file.blob);
+      }
+      
+      // Генерируем ZIP-архив
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      
+      // Создаем ссылку для скачивания
+      const url = URL.createObjectURL(zipBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'files.zip';
+      
+      // Имитируем клик для скачивания
+      document.body.appendChild(link);
+      link.click();
+      
+      // Удаляем ссылку
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('Error generating ZIP:', error);
+      alert('Failed to generate ZIP. Please try again.');
+    } finally {
+      setIsGeneratingZip(false);
+    }
+  };
+  
   // Очистка URL объектов при размонтировании компонента
   useEffect(() => {
     return () => {
@@ -339,13 +382,22 @@ function App() {
               <h2>Uploaded Files</h2>
               <p>Drag and drop to reorder files</p>
             </div>
-            <button 
-              className="generate-pdf-button" 
-              onClick={generatePdf}
-              disabled={isGeneratingPdf}
-            >
-              {isGeneratingPdf ? 'Generating...' : 'Generate PDF'}
-            </button>
+            <div className="action-buttons">
+              <button 
+                className="generate-pdf-button" 
+                onClick={generatePdf}
+                disabled={isGeneratingPdf}
+              >
+                {isGeneratingPdf ? 'Generating...' : 'Generate PDF'}
+              </button>
+              <button 
+                className="generate-zip-button" 
+                onClick={generateZip}
+                disabled={isGeneratingZip}
+              >
+                {isGeneratingZip ? 'Generating...' : 'Download ZIP'}
+              </button>
+            </div>
           </div>
           
           <div className="file-items">
