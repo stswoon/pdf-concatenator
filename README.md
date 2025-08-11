@@ -82,7 +82,7 @@ Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically impo
 
 14. Docker + Deploy
 
-15. Metadata (e.g. offline webworker) + openicons for messangers
+15. Metadata + openicons for messangers [V]
 
 16. Offline
 
