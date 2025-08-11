@@ -78,14 +78,14 @@ Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically impo
 
 12. Manual refactoring [V]
 
-13. Vite SSG
+13. Docker + Deploy
 
-14. Docker + Deploy
+14. Metadata + openicons for messangers [V]
 
-15. Metadata + openicons for messangers [V]
+15. Offline
 
-16. Offline
+16. Ad
 
-17. Ad
+17. Promote by Money
 
-18. Promote by Money
+18. Vite SSG + lazy PDF lib - TODO
