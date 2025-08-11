@@ -84,8 +84,10 @@ Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically impo
 
 15. Offline [V]
 
-16. Ad
+16. Ad - РСЯ - https://partner.yandex.kz/
 
 17. Promote by Money
 
 18. Vite SSG + lazy PDF lib - TODO
+
+19. Display Error to user - TODO

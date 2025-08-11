@@ -23,6 +23,21 @@ h2 {
     margin-top: 2rem;
 }
 
+.app-yandex-ad {
+    margin-top: 2rem;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+.app-yandex-ad-inner {
+    height: 100px;
+    width: 300px;
+    position: absolute;
+    bottom: 0;
+}
+
 @media (max-width: 600px) {
     .app-container {
         padding: 1rem;

@@ -9,6 +9,7 @@ import {pdfjs} from "react-pdf";
 import type {FileItemType} from "./types";
 import {useState} from "react";
 import useExtractPdf from "./hooks/useExtractPdf.ts";
+import {YandexAd} from "./components/YandexAd.component.tsx";
 
 //setup pdfjs worker source
 pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.mjs';
@@ -55,6 +56,12 @@ const App = () => {
             {selectedPdf && (<PdfViewer selectedPdf={selectedPdf} onClose={closePdf}/>)}
 
             <p className="app-description">{strings.description}</p>
+
+            <div className="app-yandex-ad">
+                <div className="app-yandex-ad-inner">
+                    <YandexAd/>
+                </div>
+            </div>
         </div>
     );
 };
