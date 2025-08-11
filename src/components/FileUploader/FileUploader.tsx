@@ -1,10 +1,11 @@
 import './FileUploader.css';
 import {type ChangeEvent, useRef} from 'react';
-import type {FileItem} from '../../types';
-import {strings} from "../../consts/strings.ts";
+import type {FileItemType} from '../../types';
+import {strings} from "../../consts/strings.ts"
+import { pdfjs } from 'react-pdf';
 
 interface FileUploaderProps {
-    onFilesAdded: (newFiles: FileItem[]) => void;
+    onFilesAdded: (newFiles: FileItemType[]) => void;
 }
 
 const FileUploader = ({onFilesAdded}: FileUploaderProps) => {
@@ -13,28 +14,31 @@ const FileUploader = ({onFilesAdded}: FileUploaderProps) => {
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files) {
-            const newFiles: FileItem[] = [];
+            const newFiles: FileItemType[] = [];
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const url = URL.createObjectURL(file);
 
-                let type: "image" | "pdf" = "pdf";
+                const newFile: FileItemType = {
+                    id: `${Date.now()}-${i}`,
+                    type: "image",
+                    name: file.name,
+                    blob: file,
+                    blobUrl: url,
+                }
+
                 if (file.type.startsWith('image/')) {
-                    type = 'image';
+                    newFile.type = 'image';
                 } else if (file.type === 'application/pdf') {
-                    type = 'pdf';
+                    newFile.type = 'pdf';
+                    const pdf = await pdfjs.getDocument(url).promise;
+                    newFile.pdfPagesNumber = pdf.numPages;
                 } else {
                     throw new Error('Unsupported file type');
                 }
 
-                newFiles.push({
-                    id: `${Date.now()}-${i}`,
-                    type: type,
-                    name: file.name,
-                    blob: file,
-                    blobUrl: url,
-                });
+                newFiles.push(newFile);
             }
 
             onFilesAdded(newFiles);

@@ -1,56 +1,44 @@
-import { useState, useEffect } from 'react';
-import type { FileItem } from '../types';
+import {useState, useEffect} from 'react';
+import type {FileItemType} from '../types';
 
 const useFileManager = () => {
-  const [files, setFiles] = useState<FileItem[]>([]);
-  const [selectedPdf, setSelectedPdf] = useState<FileItem | null>(null);
+    const [files, setFiles] = useState<FileItemType[]>([]);
 
-  // Очистка URL объектов при размонтировании компонента
-  useEffect(() => {
-    return () => {
-      files.forEach(file => {
-        if (file.blobUrl) {
-          URL.revokeObjectURL(file.blobUrl);
-        }
-      });
+    // Очистка URL объектов при размонтировании компонента
+    useEffect(() => {
+        return () => {
+            files.forEach(file => {
+                if (file.blobUrl) {
+                    URL.revokeObjectURL(file.blobUrl);
+                }
+            });
+        };
+    }, [files]);
+
+    const addFiles = (newFiles: FileItemType[]) => {
+        setFiles(prevFiles => [...prevFiles, ...newFiles]);
     };
-  }, [files]);
 
-  const addFiles = (newFiles: FileItem[]) => {
-    setFiles(prevFiles => [...prevFiles, ...newFiles]);
-  };
+    const removeFile = (id: string) => {
+        setFiles(prevFiles => {
+            const fileToRemove = prevFiles.find(file => file.id === id);
+            if (fileToRemove && fileToRemove.blobUrl) {
+                URL.revokeObjectURL(fileToRemove.blobUrl);
+            }
+            return prevFiles.filter(file => file.id !== id);
+        });
+    };
 
-  const removeFile = (id: string) => {
-    setFiles(prevFiles => {
-      const fileToRemove = prevFiles.find(file => file.id === id);
-      if (fileToRemove && fileToRemove.blobUrl) {
-        URL.revokeObjectURL(fileToRemove.blobUrl);
-      }
-      return prevFiles.filter(file => file.id !== id);
-    });
-  };
+    const reorderFiles = (reorderedFiles: FileItemType[]) => {
+        setFiles(reorderedFiles);
+    };
 
-  const reorderFiles = (reorderedFiles: FileItem[]) => {
-    setFiles(reorderedFiles);
-  };
-
-  const selectPdf = (file: FileItem) => {
-    setSelectedPdf(file);
-  };
-
-  const closePdf = () => {
-    setSelectedPdf(null);
-  };
-
-  return {
-    files,
-    selectedPdf,
-    addFiles,
-    removeFile,
-    reorderFiles,
-    selectPdf,
-    closePdf
-  };
+    return {
+        files,
+        addFiles,
+        removeFile,
+        reorderFiles,
+    };
 };
 
 export default useFileManager;

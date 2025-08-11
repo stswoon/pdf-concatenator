@@ -1,4 +1,4 @@
-export interface FileItem {
+export interface FileItemType {
   id: string; // unique id
   type: 'image' | 'pdf'; // uploaded file type
   name: string; //uploaded file name
