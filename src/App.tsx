@@ -52,12 +52,9 @@ const App = () => {
                 onPdfExtract={(fileItem) => extractImagesFromPdf(fileItem)}
             />
 
-            {selectedPdf && (
-                <PdfViewer
-                    selectedPdf={selectedPdf}
-                    onClose={closePdf}
-                />
-            )}
+            {selectedPdf && (<PdfViewer selectedPdf={selectedPdf} onClose={closePdf}/>)}
+
+            <p className="app-description">{strings.description}</p>
         </div>
     );
 };

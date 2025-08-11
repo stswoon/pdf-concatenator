@@ -17,6 +17,12 @@ h2 {
     margin-bottom: 1rem;
 }
 
+/*//TODO: remove all css, use MUI*/
+
+.app-description {
+    margin-top: 2rem;
+}
+
 @media (max-width: 600px) {
     .app-container {
         padding: 1rem;

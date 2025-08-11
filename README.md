@@ -1,4 +1,4 @@
-# PDF concatenator and splitter
+# PDF concatenator (and splitter)
 
 This is tool to concatenate images (jpg, png) and pdf files, and vice versa split pdf to imapges (jpg).
 
@@ -87,3 +87,5 @@ Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically impo
 16. Offline
 
 17. Ad
+
+18. Promote by Money

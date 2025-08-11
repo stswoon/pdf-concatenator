@@ -15,5 +15,6 @@ export const strings = {
     pages: "pages",
     close: "Close",
     clear: "Clear files",
-    disableGeneratePdfBecvauseOfPdf: "Extract all PDF first"
+    disableGeneratePdfBecvauseOfPdf: "Extract all PDF first",
+    description: "A versatile online tool for working with PDF files. Combine multiple images (JPG, PNG) and PDF files into a single document, or split PDF files into separate images. No any data transferring to server, can work offline, so all your data are secured and private."
 }
