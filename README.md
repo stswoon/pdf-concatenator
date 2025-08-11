@@ -78,11 +78,11 @@ Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically impo
 
 12. Manual refactoring [V]
 
-13. Docker + Deploy
+13. Docker + Deploy [V]
 
 14. Metadata + openicons for messangers [V]
 
-15. Offline
+15. Offline [V]
 
 16. Ad
 
