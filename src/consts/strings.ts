@@ -14,5 +14,6 @@ export const strings = {
     PDF: "PDF",
     pages: "pages",
     close: "Close",
-    clear: "Clear files"
+    clear: "Clear files",
+    disableGeneratePdfBecvauseOfPdf: "Extract all PDF first"
 }

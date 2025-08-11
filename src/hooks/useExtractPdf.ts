@@ -3,7 +3,7 @@ import {pdfjs} from "react-pdf";
 import {useState} from "react";
 
 interface ExtractPdfProps {
-    onExtractImages: (newImages: FileItemType[]) => void;
+    onExtractImages: (newImages: FileItemType[], afterFile?: FileItemType) => void;
     onRemoveFile: (id: string) => void
 }
 
@@ -52,7 +52,7 @@ const useExtractPdf = ({onExtractImages, onRemoveFile}: ExtractPdfProps) => {
 
                             // Если это последняя страница, добавляем все изображения и убираем pdf
                             if (i === numPages) {
-                                onExtractImages(newImages);
+                                onExtractImages(newImages, selectedPdf);
                                 onRemoveFile(selectedPdf.id);
                                 setIsExtractingPdf(false);
                             }

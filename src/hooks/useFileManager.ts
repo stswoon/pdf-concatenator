@@ -19,9 +19,17 @@ const useFileManager = () => {
     // // }, []);
     // }, [files]);
 
-    const addFiles = (newFiles: FileItemType[]) => {
+    const addFiles = (newFiles: FileItemType[], afterFile?: FileItemType) => {
         console.log("newFiles", newFiles)
-        setFiles(prevFiles => [...prevFiles, ...newFiles]);
+        if (afterFile) {
+            setFiles(prevFiles => {
+                const index = prevFiles.findIndex(file => file.id === afterFile.id);
+                if (index === -1) return [...prevFiles, ...newFiles];
+                return [...prevFiles.slice(0, index + 1), ...newFiles, ...prevFiles.slice(index + 1)];
+            });
+        } else {
+            setFiles(prevFiles => [...prevFiles, ...newFiles]);
+        }
     };
 
     const removeFile = (id: string) => {

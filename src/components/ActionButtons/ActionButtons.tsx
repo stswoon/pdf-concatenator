@@ -10,6 +10,9 @@ interface ActionButtonsProps {
     onClearFiles: () => void
 }
 
+const isExistPdfInFiles = (files: FileItemType[]) => files.some(file => file.type === 'pdf');
+
+
 const ActionButtons = ({files, onClearFiles}: ActionButtonsProps) => {
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [isGeneratingZip, setIsGeneratingZip] = useState(false);
@@ -132,6 +135,13 @@ const ActionButtons = ({files, onClearFiles}: ActionButtonsProps) => {
         }
     };
 
+    const isGeneratePdfDisabled = () => {
+        return files.length === 0 || isGeneratingPdf || isExistPdfInFiles(files);
+    }
+
+    //TODO: ability to concat pdf without parse
+    const generatePdfTitle = () => isExistPdfInFiles(files) ? strings.disableGeneratePdfBecvauseOfPdf : undefined;
+
     return (
         <div className="action-buttons">
             <button
@@ -144,7 +154,8 @@ const ActionButtons = ({files, onClearFiles}: ActionButtonsProps) => {
             <button
                 className="generate-pdf-button"
                 onClick={generatePdf}
-                disabled={files.length === 0 || isGeneratingPdf}
+                disabled={isGeneratePdfDisabled()}
+                title={generatePdfTitle()}
             >
                 {isGeneratingPdf ? strings.generatingPdf : strings.generatePdf}
             </button>
