@@ -30,7 +30,7 @@ const PdfViewer = ({selectedPdf, onClose}: PdfViewerProps) => {
                         key={`page_${index + 1}`}
                         pageNumber={index + 1}
                         className="pdf-page"
-                        width={300}
+                        // width={300}
                     />
                 ))}
             </Document>

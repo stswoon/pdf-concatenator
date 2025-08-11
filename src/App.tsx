@@ -13,12 +13,18 @@ import useExtractPdf from "./hooks/useExtractPdf.ts";
 //setup pdfjs worker source
 pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.mjs';
 
+// TODO: uncomment + show full height + make scale 70%
+// import styles to fix pdf warnings
+// import 'react-pdf/dist/Page/TextLayer.css';
+// import 'react-pdf/dist/Page/AnnotationLayer.css';
+
 const App = () => {
     const {
         files,
         addFiles,
         removeFile,
         reorderFiles,
+        clearFiles
     } = useFileManager();
 
     const {
@@ -36,7 +42,7 @@ const App = () => {
 
             <FileUploader onFilesAdded={addFiles}/>
 
-            <FilesHeader files={files} />
+            <FilesHeader files={files} onClearFiles={clearFiles}/>
 
             <FileList
                 files={files}

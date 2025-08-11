@@ -76,16 +76,14 @@ Warning: Error: Setting up fake worker failed: "Failed to fetch dynamically impo
 Сейчас весь код сосредоточен в двух файлах App.tsx и App.css. Отрефатори код, в частности разбей его по нескольким компонентам, чтобы код легче читался дл человека и был более пригоден для саппорта.
 ```
 
-12. Manual refactoring
+12. Manual refactoring [V]
 
-13. Image Resize in pdf
+13. Vite SSG
 
-14. Vite SSG
+14. Docker + Deploy
 
-15. Docker + Deploy
+15. Metadata (e.g. offline webworker) + openicons for messangers
 
-16. Beautification + Metadata (e.g. offline) + openicons for messagers
+16. Offline
 
-17. Offline
-
-18. Ad
+17. Ad

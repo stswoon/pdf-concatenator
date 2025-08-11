@@ -5,15 +5,16 @@ import ActionButtons from "../ActionButtons/ActionButtons.tsx";
 
 interface FileHeaderProps {
     files: FileItemType[];
+    onClearFiles: () => void;
 }
 
-const FilesHeader = ({files}: FileHeaderProps) => {
+const FilesHeader = ({files, onClearFiles}: FileHeaderProps) => {
     return (
         <div className="files-header">
             <div className="files-header-title">
                 <h2>{strings.uploadedFiles}</h2>
             </div>
-            <ActionButtons files={files}/>
+            <ActionButtons files={files} onClearFiles={onClearFiles}/>
         </div>
     );
 };

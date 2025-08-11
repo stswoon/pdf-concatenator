@@ -13,5 +13,6 @@ export const strings = {
     noFiles: "No files uploaded yet",
     PDF: "PDF",
     pages: "pages",
-    close: "close"
+    close: "Close",
+    clear: "Clear files"
 }

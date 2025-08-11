@@ -6,10 +6,11 @@ import type {FileItemType} from '../../types';
 import {strings} from "../../consts/strings.ts";
 
 interface ActionButtonsProps {
-    files: FileItemType[];
+    files: FileItemType[],
+    onClearFiles: () => void
 }
 
-const ActionButtons = ({files}: ActionButtonsProps) => {
+const ActionButtons = ({files, onClearFiles}: ActionButtonsProps) => {
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [isGeneratingZip, setIsGeneratingZip] = useState(false);
 
@@ -29,16 +30,20 @@ const ActionButtons = ({files}: ActionButtonsProps) => {
                     const img = new Image();
                     img.src = file.blobUrl;
 
-                    await new Promise<void>((resolve) => {
+                    await new Promise<void>((resolve, reject) => {
                         img.onload = () => {
                             // Добавляем новую страницу, кроме первого изображения
                             if (currentPage > 0) {
                                 pdf.addPage();
                             }
 
+                            //TODO: what value for A4, need check pageWidth, than use ration 0.5-1.2 other leave as is with check box to modify scale
+
                             // Вычисляем размеры для вписывания изображения в страницу
                             const pageWidth = pdf.internal.pageSize.getWidth();
                             const pageHeight = pdf.internal.pageSize.getHeight();
+
+                            console.log(`pageWidth=${pageWidth}, pageHeight=${pageHeight}`);
 
                             const imgWidth = img.width;
                             const imgHeight = img.height;
@@ -72,6 +77,10 @@ const ActionButtons = ({files}: ActionButtonsProps) => {
 
                             currentPage++;
                             resolve();
+                        };
+                        img.onerror = (cause) => {
+                            console.error(`Error loading image '${file.name}', cause:`, cause);
+                            reject(cause);
                         };
                     });
                 }
@@ -125,6 +134,13 @@ const ActionButtons = ({files}: ActionButtonsProps) => {
 
     return (
         <div className="action-buttons">
+            <button
+                className="generate-pdf-button"
+                onClick={onClearFiles}
+                disabled={files.length === 0}
+            >
+                {strings.clear}
+            </button>
             <button
                 className="generate-pdf-button"
                 onClick={generatePdf}
