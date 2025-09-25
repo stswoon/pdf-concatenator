@@ -36,6 +36,14 @@ const ItemContainer = styled(Paper, {
     },
 }));
 
+const FilePreview = styled('img')({
+    width: '140px',
+    height: '140px',
+    objectFit: 'cover',
+    borderRadius: '4px',
+    marginLeft: '8px',
+});
+
 const FileInfo = styled(Box)({
     flex: 1,
     marginLeft: '8px',
@@ -84,6 +92,10 @@ const FileItem = ({
             isDragOver={isDragOver}
         >
             <DragIndicatorIcon color="action" />
+            
+            {file.type === 'image' && (
+                <FilePreview src={file.blobUrl} alt={file.name} />
+            )}
             
             <FileInfo>
                 <FileName variant="body1">
