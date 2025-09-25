@@ -1,7 +1,7 @@
 import { useState, type DragEvent } from 'react';
 import type { FileItemType } from '../types';
 import FileItem from "./FileItem";
-import { Box, Paper, Typography, styled } from '@mui/material';
+import { Box, Paper, Typography, styled, Grid } from '@mui/material';
 import {strings} from '../consts/strings';
 
 interface FileListProps {
@@ -72,24 +72,25 @@ const FileList = ({files, onMove, onRemove, onPdfSelect, onPdfExtract}: FileList
     }
 
     return (
-        <Box>
+        <Grid container spacing={2} sx={{ padding: 2 }}>
             {files.map((file, index) => (
-                <FileItem
-                    key={file.id}
-                    file={file}
-                    index={index}
-                    onRemove={onRemove}
-                    onPdfSelect={onPdfSelect}
-                    onPdfExtract={onPdfExtract}
-                    onDragStart={(e: DragEvent<HTMLDivElement>) => handleDragStart(e, file)}
-                    onDragOver={(e: DragEvent<HTMLDivElement>) => handleDragOver(e, file)}
-                    onDrop={(e: DragEvent<HTMLDivElement>) => handleDrop(e, file)}
-                    onDragEnd={handleDragEnd}
-                    isDragging={draggedItem?.id === file.id}
-                    isDragOver={dragOverItem?.id === file.id}
-                />
+                <Grid item xs={12} sm={6} md={4} lg={3} key={file.id}>
+                    <FileItem
+                        file={file}
+                        index={index}
+                        onRemove={onRemove}
+                        onPdfSelect={onPdfSelect}
+                        onPdfExtract={onPdfExtract}
+                        onDragStart={(e: DragEvent<HTMLDivElement>) => handleDragStart(e, file)}
+                        onDragOver={(e: DragEvent<HTMLDivElement>) => handleDragOver(e, file)}
+                        onDrop={(e: DragEvent<HTMLDivElement>) => handleDrop(e, file)}
+                        onDragEnd={handleDragEnd}
+                        isDragging={draggedItem?.id === file.id}
+                        isDragOver={dragOverItem?.id === file.id}
+                    />
+                </Grid>
             ))}
-        </Box>
+        </Grid>
     );
 };
 

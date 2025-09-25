@@ -25,9 +25,11 @@ const ItemContainer = styled(Paper, {
     shouldForwardProp: (prop) => prop !== 'isDragging' && prop !== 'isDragOver'
 })<{ isDragging?: boolean; isDragOver?: boolean }>(({ theme, isDragging, isDragOver }) => ({
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    padding: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    padding: theme.spacing(2),
+    height: '280px',
+    width: '100%',
     backgroundColor: isDragOver ? theme.palette.action.hover : theme.palette.background.paper,
     opacity: isDragging ? 0.5 : 1,
     cursor: 'move',
@@ -36,29 +38,41 @@ const ItemContainer = styled(Paper, {
     },
 }));
 
-const FilePreview = styled('img')({
+const PreviewContainer = styled(Box)({
     width: '140px',
     height: '140px',
-    objectFit: 'cover',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+});
+
+const FilePreview = styled('img')({
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
     borderRadius: '4px',
-    marginLeft: '8px',
 });
 
 const FileInfo = styled(Box)({
-    flex: 1,
-    marginLeft: '8px',
+    width: '100%',
+    marginTop: '8px',
     overflow: 'hidden',
+    textAlign: 'center',
 });
 
 const FileName = styled(Typography)({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    marginBottom: '8px',
 });
 
 const ActionButtons = styled(Box)(({ theme }) => ({
     display: 'flex',
     gap: theme.spacing(1),
+    justifyContent: 'center',
+    width: '100%',
+    marginTop: 'auto',
 }));
 
 const FileItem = ({
@@ -91,17 +105,23 @@ const FileItem = ({
             isDragging={isDragging}
             isDragOver={isDragOver}
         >
-            <DragIndicatorIcon color="action" />
-            
-            {file.type === 'image' && (
-                <FilePreview src={file.blobUrl} alt={file.name} />
-            )}
+            <PreviewContainer>
+                {file.type === 'image' ? (
+                    <FilePreview src={file.blobUrl} alt={file.name} />
+                ) : (
+                    <PictureAsPdfIcon sx={{ fontSize: '100px', color: 'text.secondary' }} />
+                )}
+            </PreviewContainer>
             
             <FileInfo>
                 <FileName variant="body1">
                     {index + 1}. {file.name}
                 </FileName>
             </FileInfo>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mb: 1 }}>
+                <DragIndicatorIcon color="action" />
+            </Box>
 
             <ActionButtons>
                 {file.type === 'pdf' && (
