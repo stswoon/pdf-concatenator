@@ -1,21 +1,42 @@
-import './FilesHeader.css';
-import type {FileItemType as FileItemType} from '../../types';
-import {strings} from "../../consts/strings.ts";
-import ActionButtons from "../ActionButtons/ActionButtons.tsx";
+import { Box, Typography, styled } from '@mui/material';
+import {strings} from '../../consts/strings';
 
-interface FileHeaderProps {
-    files: FileItemType[];
-    onClearFiles: () => void;
+interface FilesHeaderProps {
+    filesCount: number;
+    pdfCount: number;
+    imageCount: number;
 }
 
-const FilesHeader = ({files, onClearFiles}: FileHeaderProps) => {
+const HeaderContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing(2),
+}));
+
+const StatsContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    gap: theme.spacing(2),
+}));
+
+const FilesHeader = ({ filesCount, pdfCount, imageCount }: FilesHeaderProps) => {
     return (
-        <div className="files-header">
-            <div className="files-header-title">
-                <h2>{strings.uploadedFiles}</h2>
-            </div>
-            <ActionButtons files={files} onClearFiles={onClearFiles}/>
-        </div>
+        <HeaderContainer>
+            <Typography variant="h5" component="h1">
+                {strings.uploadedFiles}
+            </Typography>
+            <StatsContainer>
+                <Typography variant="body2" color="text.secondary">
+                    {strings.totalFiles}: {filesCount}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {strings.pdfFiles}: {pdfCount}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {strings.imageFiles}: {imageCount}
+                </Typography>
+            </StatsContainer>
+        </HeaderContainer>
     );
 };
 

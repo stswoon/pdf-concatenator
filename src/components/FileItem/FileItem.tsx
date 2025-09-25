@@ -1,84 +1,131 @@
-import type {FileItemType as FileItemType} from '../../types';
-import './FileItem.css';
-import type {DragEvent} from 'react';
-import {strings} from "../../consts/strings.ts";
+import { type DragEvent } from 'react';
+import type { FileItemType } from '../../types';
+import { Box, Paper, IconButton, Typography, styled } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 interface FileItemProps {
     file: FileItemType;
     index: number;
     onRemove: (id: string) => void;
-    onDragStart: (e: DragEvent, id: string) => void;
-    onDragOver: (e: DragEvent) => void;
-    onDragLeave: (e: DragEvent) => void;
-    onDrop: (e: DragEvent, id: string) => void;
     onPdfSelect: (file: FileItemType) => void;
     onPdfExtract: (file: FileItemType) => void;
+    onDragStart: (e: DragEvent<HTMLDivElement>) => void;
+    onDragOver: (e: DragEvent<HTMLDivElement>) => void;
+    onDrop: (e: DragEvent<HTMLDivElement>) => void;
+    onDragEnd: () => void;
+    isDragging: boolean;
+    isDragOver: boolean;
 }
 
+const ItemContainer = styled(Paper, {
+    shouldForwardProp: (prop) => prop !== 'isDragging' && prop !== 'isDragOver'
+})<{ isDragging?: boolean; isDragOver?: boolean }>(({ theme, isDragging, isDragOver }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    backgroundColor: isDragOver ? theme.palette.action.hover : theme.palette.background.paper,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'move',
+    '&:hover': {
+        backgroundColor: theme.palette.action.hover,
+    },
+}));
+
+const FileInfo = styled(Box)({
+    flex: 1,
+    marginLeft: '8px',
+    overflow: 'hidden',
+});
+
+const FileName = styled(Typography)({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+});
+
+const ActionButtons = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    gap: theme.spacing(1),
+}));
+
 const FileItem = ({
-                      file,
-                      index,
-                      onRemove,
-                      onDragStart,
-                      onDragOver,
-                      onDragLeave,
-                      onDrop,
-                      onPdfSelect,
-                      onPdfExtract
-                  }: FileItemProps) => {
+    file,
+    index,
+    onRemove,
+    onPdfSelect,
+    onPdfExtract,
+    onDragStart,
+    onDragOver,
+    onDrop,
+    onDragEnd,
+    isDragging,
+    isDragOver
+}: FileItemProps) => {
+    const handleDownload = () => {
+        const link = document.createElement('a');
+        link.href = file.blobUrl;
+        link.download = file.name;
+        link.click();
+    };
+
     return (
-        <div
-            className="file-item"
+        <ItemContainer
             draggable
-            onDragStart={(e) => onDragStart(e, file.id)}
+            onDragStart={onDragStart}
             onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDrop={(e) => onDrop(e, file.id)}
+            onDrop={onDrop}
+            onDragEnd={onDragEnd}
+            isDragging={isDragging}
+            isDragOver={isDragOver}
         >
-            <div className="file-dragger">{strings.dragger}</div>
-            <div className="file-info">
-                <div className="file-number">{index + 1}</div>
-            </div>
-            <div className="file-thumbnail">
-                {file.type === 'image' ? (
-                    <img src={file.blobUrl} alt={file.name} className="image-thumbnail"/>
-                ) : (
-                    <div className="pdf-thumbnail">
-                        <div className="pdf-icon">{strings.PDF}</div>
-                        {file.pdfPagesNumber && (
-                            <div className="pdf-pages">{file.pdfPagesNumber} {strings.pages}</div>
-                        )}
-                    </div>
-                )}
-            </div>
-            <div className="file-info">
-                <div className="file-name">{file.name}</div>
-            </div>
-            <div className="file-actions">
+            <DragIndicatorIcon color="action" />
+            
+            <FileInfo>
+                <FileName variant="body1">
+                    {index + 1}. {file.name}
+                </FileName>
+            </FileInfo>
+
+            <ActionButtons>
                 {file.type === 'pdf' && (
                     <>
-                        <button
-                            className="view-pdf-button"
+                        <IconButton
+                            size="small"
                             onClick={() => onPdfSelect(file)}
+                            title="View PDF"
                         >
-                            {strings.view}
-                        </button>
-                        <button
-                            className="view-pdf-button"
+                            <VisibilityIcon />
+                        </IconButton>
+                        <IconButton
+                            size="small"
                             onClick={() => onPdfExtract(file)}
+                            title="Extract PDF pages"
                         >
-                            {strings.extract}
-                        </button>
+                            <PictureAsPdfIcon />
+                        </IconButton>
                     </>
                 )}
-                <button
-                    className="remove-button"
-                    onClick={() => onRemove(file.id)}
+                <IconButton
+                    size="small"
+                    onClick={handleDownload}
+                    title="Download file"
                 >
-                    {strings.remove}
-                </button>
-            </div>
-        </div>
+                    <FileDownloadIcon />
+                </IconButton>
+                <IconButton
+                    size="small"
+                    onClick={() => onRemove(file.id)}
+                    title="Remove file"
+                >
+                    <DeleteIcon />
+                </IconButton>
+            </ActionButtons>
+        </ItemContainer>
     );
 };
 

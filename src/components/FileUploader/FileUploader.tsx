@@ -1,68 +1,84 @@
-import './FileUploader.css';
-import {type ChangeEvent, useRef} from 'react';
-import type {FileItemType} from '../../types';
-import {strings} from "../../consts/strings.ts"
-import { pdfjs } from 'react-pdf';
+import { useRef, type ChangeEvent } from 'react';
+import { strings } from "../../consts/strings.ts";
+import type { FileItemType } from "../../types";
+import { Box, Button, styled } from '@mui/material';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 interface FileUploaderProps {
-    onFilesAdded: (newFiles: FileItemType[]) => void;
+    onFilesAdded: (files: FileItemType[]) => void;
 }
 
-const FileUploader = ({onFilesAdded}: FileUploaderProps) => {
+const UploadContainer = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(3),
+}));
+
+const HiddenInput = styled('input')({
+    display: 'none',
+});
+
+const FileUploader = ({ onFilesAdded }: FileUploaderProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
-        if (files) {
-            const newFiles: FileItemType[] = [];
+        if (!files) return;
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const url = URL.createObjectURL(file);
+        const uploadedFiles: FileItemType[] = [];
 
-                const newFile: FileItemType = {
-                    id: `${Date.now()}-${i}`,
-                    type: "image",
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const id = crypto.randomUUID();
+
+            if (file.type === 'application/pdf') {
+                uploadedFiles.push({
+                    id,
+                    type: 'pdf',
                     name: file.name,
                     blob: file,
-                    blobUrl: url,
-                }
-
-                if (file.type.startsWith('image/')) {
-                    newFile.type = 'image';
-                } else if (file.type === 'application/pdf') {
-                    newFile.type = 'pdf';
-                    const pdf = await pdfjs.getDocument(url).promise;
-                    newFile.pdfPagesNumber = pdf.numPages;
-                } else {
-                    throw new Error('Unsupported file type');
-                }
-
-                newFiles.push(newFile);
+                    blobUrl: URL.createObjectURL(file),
+                });
+            } else if (file.type.startsWith('image/')) {
+                uploadedFiles.push({
+                    id,
+                    type: 'image',
+                    name: file.name,
+                    blob: file,
+                    blobUrl: URL.createObjectURL(file),
+                });
             }
-
-            onFilesAdded(newFiles);
         }
 
-        // Reset the file input
+        if (uploadedFiles.length > 0) {
+            onFilesAdded(uploadedFiles);
+        }
+
+        // Reset input value to allow uploading the same file again
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
     };
 
     return (
-        <div className="upload-section">
-            <input
-                type="file"
+        <UploadContainer>
+            <HiddenInput
                 ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*,application/pdf"
+                type="file"
+                accept="image/*,.pdf"
                 multiple
-                className="file-input"
-                id="file-input"
+                onChange={handleFileChange}
+                id="file-upload"
             />
-            <label htmlFor="file-input" className="upload-button">{strings.uploadFiles}</label>
-        </div>
+            <Button
+                variant="contained"
+                component="label"
+                htmlFor="file-upload"
+                startIcon={<UploadFileIcon />}
+            >
+                {strings.uploadFiles}
+            </Button>
+        </UploadContainer>
     );
 };
 

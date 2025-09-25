@@ -1,43 +1,90 @@
-import './PdfViewer.css';
-import {useState} from 'react';
-import {Document, Page} from 'react-pdf';
-import type {FileItemType} from '../../types';
-import {strings} from "../../consts/strings.ts";
+import { useState } from 'react';
+import { Document, Page } from 'react-pdf';
+import { Box, IconButton, Dialog, DialogContent, DialogTitle, Typography } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import type { FileItemType } from '../../types';
+import strings from '../../strings';
 
 interface PdfViewerProps {
-    selectedPdf: FileItemType | null;
+    pdfFile: FileItemType;
     onClose: () => void;
 }
 
-const PdfViewer = ({selectedPdf, onClose}: PdfViewerProps) => {
+const PdfViewer = ({ pdfFile, onClose }: PdfViewerProps) => {
     const [numPages, setNumPages] = useState<number | null>(null);
+    const [pageNumber, setPageNumber] = useState(1);
 
-    const onDocumentLoadSuccess = ({numPages}: { numPages: number }) => {
+    const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
         setNumPages(numPages);
+        setPageNumber(1);
     };
 
-    if (!selectedPdf) return null;
+    const changePage = (offset: number) => {
+        if (numPages === null) return;
+        setPageNumber(prevPageNumber => {
+            const newPageNumber = prevPageNumber + offset;
+            return Math.max(1, Math.min(newPageNumber, numPages));
+        });
+    };
+
+    const previousPage = () => changePage(-1);
+    const nextPage = () => changePage(1);
 
     return (
-        <div className="pdf-viewer">
-            <Document
-                file={selectedPdf.blobUrl}
-                onLoadSuccess={onDocumentLoadSuccess}
-                className="pdf-document"
-            >
-                {Array.from(new Array(numPages || 0), (_, index) => (
-                    <Page
-                        key={`page_${index + 1}`}
-                        pageNumber={index + 1}
-                        className="pdf-page"
-                        // width={300}
-                    />
-                ))}
-            </Document>
-            <div className="pdf-controls">
-                <button className="close-pdf-button" onClick={onClose}>{strings.close}</button>
-            </div>
-        </div>
+        <Dialog
+            open={true}
+            onClose={onClose}
+            maxWidth="md"
+            fullWidth
+        >
+            <DialogTitle sx={{ m: 0, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h6" component="div">
+                    {pdfFile.name}
+                </Typography>
+                <IconButton
+                    onClick={onClose}
+                    size="small"
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <Document
+                        file={pdfFile.blobUrl}
+                        onLoadSuccess={onDocumentLoadSuccess}
+                    >
+                        <Page
+                            pageNumber={pageNumber}
+                            renderTextLayer={false}
+                            renderAnnotationLayer={false}
+                        />
+                    </Document>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <IconButton
+                            onClick={previousPage}
+                            disabled={pageNumber <= 1}
+                        >
+                            <NavigateBeforeIcon />
+                        </IconButton>
+
+                        <Typography>
+                            Page {pageNumber} of {numPages}
+                        </Typography>
+
+                        <IconButton
+                            onClick={nextPage}
+                            disabled={numPages === null || pageNumber >= numPages}
+                        >
+                            <NavigateNextIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
+            </DialogContent>
+        </Dialog>
     );
 };
 

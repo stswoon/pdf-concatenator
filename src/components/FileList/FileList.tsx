@@ -1,79 +1,95 @@
-import './FileList.css';
-import {useState, type DragEvent} from 'react';
-import type { FileItemType} from '../../types';
-import FileItem from "../FileItem/FileItem.tsx";
-import {strings} from "../../consts/strings.ts";
+import { useState, type DragEvent } from 'react';
+import type { FileItemType } from '../../types';
+import FileItem from "../FileItem/FileItem";
+import { Box, Paper, Typography, styled } from '@mui/material';
+import {strings} from '../../consts/strings';
 
 interface FileListProps {
     files: FileItemType[];
-    onFilesReorder: (reorderedFiles: FileItemType[]) => void;
-    onRemoveFile: (id: string) => void;
+    onMove: (reorderedFiles: FileItemType[]) => void;
+    onRemove: (id: string) => void;
     onPdfSelect: (file: FileItemType) => void;
     onPdfExtract: (file: FileItemType) => void;
 }
 
-const FileList = ({files, onFilesReorder, onRemoveFile, onPdfSelect, onPdfExtract}: FileListProps) => {
-    const [draggedItem, setDraggedItem] = useState<string | null>(null);
-    // const [dragOverItem, setDragOverItem] = useState<string | null>(null);
+const NoFilesContainer = styled(Paper)(({ theme }) => ({
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(1.5),
+    fontStyle: 'italic',
+}));
 
-    const handleDragStart = (e: DragEvent, id: string) => {
-        setDraggedItem(id);
+const FileList = ({files, onMove, onRemove, onPdfSelect, onPdfExtract}: FileListProps) => {
+    const [draggedItem, setDraggedItem] = useState<FileItemType | null>(null);
+    const [dragOverItem, setDragOverItem] = useState<FileItemType | null>(null);
+
+    const handleDragStart = (e: DragEvent<HTMLDivElement>, item: FileItemType) => {
+        setDraggedItem(item);
         e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', id); // Для Firefox
     };
 
-    const handleDragOver = (e: DragEvent) => {
+    const handleDragOver = (e: DragEvent<HTMLDivElement>, item: FileItemType) => {
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
+        if (draggedItem && draggedItem.id !== item.id) {
+            setDragOverItem(item);
+        }
     };
 
-    const handleDragLeave = () => {
-        // setDragOverItem(null);
-    };
-
-    const handleDrop = (e: DragEvent, targetId: string) => {
+    const handleDrop = (e: DragEvent<HTMLDivElement>, dropTarget: FileItemType) => {
         e.preventDefault();
 
-        if (draggedItem && draggedItem !== targetId) {
-            const draggedIndex = files.findIndex(file => file.id === draggedItem);
-            const targetIndex = files.findIndex(file => file.id === targetId);
-
-            if (draggedIndex !== -1 && targetIndex !== -1) {
-                const newFiles = [...files];
-                const [movedItem] = newFiles.splice(draggedIndex, 1);
-                newFiles.splice(targetIndex, 0, movedItem);
-
-                onFilesReorder(newFiles);
-            }
+        if (!draggedItem || draggedItem.id === dropTarget.id) {
+            return;
         }
 
+        const reorderedFiles = [...files];
+        const draggedIndex = files.findIndex(file => file.id === draggedItem.id);
+        const dropIndex = files.findIndex(file => file.id === dropTarget.id);
+
+        reorderedFiles.splice(draggedIndex, 1);
+        reorderedFiles.splice(dropIndex, 0, draggedItem);
+
+        onMove(reorderedFiles);
         setDraggedItem(null);
-        // setDragOverItem(null);
+        setDragOverItem(null);
+    };
+
+    const handleDragEnd = () => {
+        setDraggedItem(null);
+        setDragOverItem(null);
     };
 
     if (files.length === 0) {
-        return <div className="no-files-item">
-            <div className="no-files">{strings.noFiles}</div>
-        </div>;
+        return (
+            <NoFilesContainer>
+                <Typography variant="body1">
+                    {strings.noFiles}
+                </Typography>
+            </NoFilesContainer>
+        );
     }
 
     return (
-        <div className="files-list">
+        <Box>
             {files.map((file, index) => (
                 <FileItem
                     key={file.id}
                     file={file}
                     index={index}
-                    onRemove={onRemoveFile}
-                    onDragStart={handleDragStart}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
+                    onRemove={onRemove}
                     onPdfSelect={onPdfSelect}
                     onPdfExtract={onPdfExtract}
+                    onDragStart={(e: DragEvent<HTMLDivElement>) => handleDragStart(e, file)}
+                    onDragOver={(e: DragEvent<HTMLDivElement>) => handleDragOver(e, file)}
+                    onDrop={(e: DragEvent<HTMLDivElement>) => handleDrop(e, file)}
+                    onDragEnd={handleDragEnd}
+                    isDragging={draggedItem?.id === file.id}
+                    isDragOver={dragOverItem?.id === file.id}
                 />
             ))}
-        </div>
+        </Box>
     );
 };
 

@@ -1,25 +1,32 @@
-import './App.css';
-import {strings} from "./consts/strings.ts";
-import useFileManager from "./hooks/useFileManager.ts";
-import FileUploader from "./components/FileUploader/FileUploader.tsx";
-import PdfViewer from "./components/PdfViewer/PdfViewer.tsx";
-import FilesHeader from "./components/FileHeader/FilesHeader.tsx";
-import FileList from "./components/FileList/FileList.tsx";
-import {pdfjs} from "react-pdf";
-import type {FileItemType} from "./types";
-import {useState} from "react";
-import useExtractPdf from "./hooks/useExtractPdf.ts";
-import {YandexAd} from "./components/YandexAd.component.tsx";
+import { useState } from 'react';
+import { Container, CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import type { FileItemType } from './types';
+import FileUploader from './components/FileUploader/FileUploader';
+import FilesHeader from './components/FileHeader/FilesHeader';
+import FileList from './components/FileList/FileList';
+import PdfViewer from './components/PdfViewer/PdfViewer';
+import ActionButtons from './components/ActionButtons/ActionButtons';
+import useFileManager from './hooks/useFileManager';
+import useExtractPdf from './hooks/useExtractPdf';
 
-//setup pdfjs worker source
-pdfjs.GlobalWorkerOptions.workerSrc = 'pdf.worker.mjs';
-
-// TODO: uncomment + show full height + make scale 70%
-// import styles to fix pdf warnings
-// import 'react-pdf/dist/Page/TextLayer.css';
-// import 'react-pdf/dist/Page/AnnotationLayer.css';
+const theme = createTheme({
+    palette: {
+        mode: 'light',
+        primary: {
+            main: '#1976d2',
+        },
+        secondary: {
+            main: '#dc004e',
+        },
+    },
+});
 
 const App = () => {
+    const [selectedPdfFile, setSelectedPdfFile] = useState<FileItemType | null>(null);
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+    const [isGeneratingZip, setIsGeneratingZip] = useState(false);
+
     const {
         files,
         addFiles,
@@ -28,41 +35,77 @@ const App = () => {
         clearFiles
     } = useFileManager();
 
-    const {
-        extractImagesFromPdf,
-        // isExtractingPdf
-    } = useExtractPdf({onExtractImages: addFiles, onRemoveFile: removeFile});
+    const { extractImagesFromPdf, isExtractingPdf } = useExtractPdf({
+        onExtractImages: addFiles,
+        onRemoveFile: removeFile
+    });
 
-    const [selectedPdf, setSelectedPdf] = useState<FileItemType | null>(null);
-    const selectPdf = (file: FileItemType) => setSelectedPdf(file);
-    const closePdf = () => setSelectedPdf(null);
+    const handlePdfSelect = (file: FileItemType) => {
+        setSelectedPdfFile(file);
+    };
+
+    const handlePdfClose = () => {
+        setSelectedPdfFile(null);
+    };
+
+    const handleGeneratePdf = async () => {
+        setIsGeneratingPdf(true);
+        try {
+            // PDF generation logic here
+        } finally {
+            setIsGeneratingPdf(false);
+        }
+    };
+
+    const handleGenerateZip = async () => {
+        setIsGeneratingZip(true);
+        try {
+            // ZIP generation logic here
+        } finally {
+            setIsGeneratingZip(false);
+        }
+    };
+
+    const pdfFiles = files.filter((f: FileItemType) => f.type === 'pdf');
+    const imageFiles = files.filter((f: FileItemType) => f.type === 'image');
 
     return (
-        <div className="app-container">
-            <h1>{strings.appName}</h1>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Container maxWidth="md" sx={{ py: 4 }}>
+                <FileUploader onFilesAdded={addFiles} />
+                
+                <FilesHeader
+                    filesCount={files.length}
+                    pdfCount={pdfFiles.length}
+                    imageCount={imageFiles.length}
+                />
 
-            <FileUploader onFilesAdded={addFiles}/>
+                <FileList
+                    files={files}
+                    onRemove={removeFile}
+                    onPdfSelect={handlePdfSelect}
+                    onPdfExtract={extractImagesFromPdf}
+                    onMove={reorderFiles}
+                />
 
-            <FilesHeader files={files} onClearFiles={clearFiles}/>
+                <ActionButtons
+                    files={files}
+                    onGeneratePdf={handleGeneratePdf}
+                    onGenerateZip={handleGenerateZip}
+                    onClearAll={clearFiles}
+                    isGeneratingPdf={isGeneratingPdf}
+                    isGeneratingZip={isGeneratingZip}
+                />
 
-            <FileList
-                files={files}
-                onFilesReorder={reorderFiles}
-                onRemoveFile={removeFile}
-                onPdfSelect={selectPdf}
-                onPdfExtract={(fileItem) => extractImagesFromPdf(fileItem)}
-            />
-
-            {selectedPdf && (<PdfViewer selectedPdf={selectedPdf} onClose={closePdf}/>)}
-
-            <p className="app-description">{strings.description}</p>
-
-            <div className="app-yandex-ad">
-                <div className="app-yandex-ad-inner">
-                    <YandexAd/>
-                </div>
-            </div>
-        </div>
+                {selectedPdfFile && (
+                    <PdfViewer
+                        pdfFile={selectedPdfFile}
+                        onClose={handlePdfClose}
+                    />
+                )}
+            </Container>
+        </ThemeProvider>
     );
 };
 
