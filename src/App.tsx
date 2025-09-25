@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Container, CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import type { FileItemType } from './types';
-import FileUploader from './components/FileUploader/FileUploader';
-import FilesHeader from './components/FileHeader/FilesHeader';
-import FileList from './components/FileList/FileList';
-import PdfViewer from './components/PdfViewer/PdfViewer';
-import ActionButtons from './components/ActionButtons/ActionButtons';
+import FileUploader from './components/FileUploader';
+import FilesHeader from './components/FilesHeader';
+import FileList from './components/FileList';
+import PdfViewer from './components/PdfViewer';
+import ActionButtons from './components/ActionButtons';
 import useFileManager from './hooks/useFileManager';
 import useExtractPdf from './hooks/useExtractPdf';
 

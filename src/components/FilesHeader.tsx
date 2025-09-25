@@ -1,5 +1,5 @@
 import { Box, Typography, styled } from '@mui/material';
-import {strings} from '../../consts/strings';
+import {strings} from '../consts/strings';
 
 interface FilesHeaderProps {
     filesCount: number;

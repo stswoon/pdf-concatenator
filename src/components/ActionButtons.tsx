@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Stack } from '@mui/material';
-import type { FileItemType } from '../../types';
-import { strings } from "../../consts/strings";
+import type { FileItemType } from '../types';
+import { strings } from "../consts/strings";
 
 interface ActionButtonsProps {
     files: FileItemType[];

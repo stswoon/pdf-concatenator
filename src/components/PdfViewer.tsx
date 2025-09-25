@@ -4,8 +4,8 @@ import { Box, IconButton, Dialog, DialogContent, DialogTitle, Typography } from 
 import CloseIcon from '@mui/icons-material/Close';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import type { FileItemType } from '../../types';
-import strings from '../../strings';
+import type { FileItemType } from '../types';
+import { strings } from '../consts/strings';
 
 interface PdfViewerProps {
     pdfFile: FileItemType;

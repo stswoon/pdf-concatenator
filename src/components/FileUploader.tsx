@@ -1,6 +1,6 @@
 import { useRef, type ChangeEvent } from 'react';
-import { strings } from "../../consts/strings.ts";
-import type { FileItemType } from "../../types";
+import { strings } from "../consts/strings.ts";
+import type { FileItemType } from "../types";
 import { Box, Button, styled } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 

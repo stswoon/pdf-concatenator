@@ -1,8 +1,8 @@
 import { useState, type DragEvent } from 'react';
-import type { FileItemType } from '../../types';
-import FileItem from "../FileItem/FileItem";
+import type { FileItemType } from '../types';
+import FileItem from "./FileItem";
 import { Box, Paper, Typography, styled } from '@mui/material';
-import {strings} from '../../consts/strings';
+import {strings} from '../consts/strings';
 
 interface FileListProps {
     files: FileItemType[];

@@ -1,5 +1,5 @@
 import { type DragEvent } from 'react';
-import type { FileItemType } from '../../types';
+import type { FileItemType } from '../types';
 import { Box, Paper, IconButton, Typography, styled } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
