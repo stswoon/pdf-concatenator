@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import type { FileItemType } from '../types';
 import { strings } from "../consts/strings";
@@ -20,18 +19,19 @@ const ActionButtons = ({
     isGeneratingPdf,
     isGeneratingZip
 }: ActionButtonsProps) => {
-    const [isHovering, setIsHovering] = useState(false);
+    // const [isHovering, setIsHovering] = useState(false);
+    // const [setIsHovering] = useState(false);
 
     const hasPdfFiles = files.some(file => file.type === 'pdf');
     const hasImageFiles = files.some(file => file.type === 'image');
-    const totalPages = files.reduce((sum, file) => sum + (file.pdfPagesNumber || 1), 0);
+    // const totalPages = files.reduce((sum, file) => sum + (file.pdfPagesNumber || 1), 0);
 
     return (
         <Stack
             direction="row"
             spacing={2}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            // onMouseEnter={() => setIsHovering(true)}
+            // onMouseLeave={() => setIsHovering(false)}
         >
             {hasPdfFiles && (
                 <Button

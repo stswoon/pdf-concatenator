@@ -1,7 +1,7 @@
 import { useState, type DragEvent } from 'react';
 import type { FileItemType } from '../types';
 import FileItem from "./FileItem";
-import { Box, Paper, Typography, styled, Grid } from '@mui/material';
+import { Paper, Typography, styled, Grid } from '@mui/material';
 import {strings} from '../consts/strings';
 
 interface FileListProps {
@@ -74,7 +74,7 @@ const FileList = ({files, onMove, onRemove, onPdfSelect, onPdfExtract}: FileList
     return (
         <Grid container spacing={2} sx={{ padding: 2 }}>
             {files.map((file, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={file.id}>
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={file.id}>
                     <FileItem
                         file={file}
                         index={index}

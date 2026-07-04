@@ -35,7 +35,7 @@ const App = () => {
         clearFiles
     } = useFileManager();
 
-    const { extractImagesFromPdf, isExtractingPdf } = useExtractPdf({
+    const { extractImagesFromPdf } = useExtractPdf({
         onExtractImages: addFiles,
         onRemoveFile: removeFile
     });
